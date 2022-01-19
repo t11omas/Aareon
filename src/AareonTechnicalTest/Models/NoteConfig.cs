@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AareonTechnicalTest.Models
 {
-    public class TicketConfig : IEntityTypeConfiguration<Ticket>
+    public class NoteConfig : IEntityTypeConfiguration<Note>
     {
-        public void Configure(EntityTypeBuilder<Ticket> builder)
+        public void Configure(EntityTypeBuilder<Note> builder)
         {
             builder.HasKey(x => x.Id);
         }

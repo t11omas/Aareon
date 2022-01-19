@@ -1,34 +1,55 @@
 ﻿using AareonTechnicalTest.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using Z.EntityFramework.Plus;
 
 namespace AareonTechnicalTest
 {
     public class ApplicationContext : DbContext
     {
+        static ApplicationContext()
+        {
+            AuditManager.DefaultConfiguration.AutoSavePreAction = (context, audit) =>
+                // ADD "Where(x => x.AuditEntryID == 0)" to allow multiple SaveChanges with same Audit
+                (context as ApplicationContext).AuditEntries.AddRange(audit.Entries);
+        }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
-            var envDir = Environment.CurrentDirectory;
-
-            DatabasePath = $"{envDir}{System.IO.Path.DirectorySeparatorChar}Ticketing.db";
         }
 
         public virtual DbSet<Person> Persons { get; set; }
 
         public virtual DbSet<Ticket> Tickets { get; set; }
 
-        public string DatabasePath { get; set; }
+        public virtual DbSet<Note> Notes { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        public DbSet<AuditEntry> AuditEntries { get; set; }
+        public DbSet<AuditEntryProperty> AuditEntryProperties { get; set; }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            options.UseSqlite($"Data Source={DatabasePath}");
+            var audit = new Audit();
+            audit.PreSaveChanges(this);
+            var rowAffecteds = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            audit.PostSaveChanges();
+
+            if (audit.Configuration.AutoSavePreAction != null)
+            {
+                audit.Configuration.AutoSavePreAction(this, audit);
+                await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            return rowAffecteds;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            PersonConfig.Configure(modelBuilder);
-            TicketConfig.Configure(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(ApplicationContext)));
         }
     }
 }
