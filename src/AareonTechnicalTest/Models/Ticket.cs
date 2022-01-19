@@ -1,14 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AareonTechnicalTest.Models
+﻿namespace AareonTechnicalTest.Models
 {
     public class Ticket
     {
-        [Key]
-        public int Id { get; }
+        public int Id { get; set; }
 
         public string Content { get; set; }
 
         public int PersonId { get; set; }
+
+        public Person Person { get; set; }
     }
 }
