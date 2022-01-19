@@ -1,4 +1,6 @@
-﻿namespace AareonTechnicalTest.Models
+﻿using System.Collections.Generic;
+
+namespace AareonTechnicalTest.Models
 {
     public class Ticket
     {
@@ -9,5 +11,7 @@
         public int PersonId { get; set; }
 
         public Person Person { get; set; }
+
+        public ICollection<Note> Notes { get; set; }
     }
 }
