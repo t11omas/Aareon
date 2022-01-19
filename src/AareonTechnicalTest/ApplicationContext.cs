@@ -9,6 +9,13 @@ namespace AareonTechnicalTest
 {
     public class ApplicationContext : DbContext
     {
+        static ApplicationContext()
+        {
+            AuditManager.DefaultConfiguration.AutoSavePreAction = (context, audit) =>
+                // ADD "Where(x => x.AuditEntryID == 0)" to allow multiple SaveChanges with same Audit
+                (context as ApplicationContext).AuditEntries.AddRange(audit.Entries);
+        }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
