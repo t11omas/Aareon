@@ -1,16 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AareonTechnicalTest.Models
 {
-    public static class TicketConfig
+    public class TicketConfig : IEntityTypeConfiguration<Ticket>
     {
-        public static void Configure(ModelBuilder modelBuilder)
+        public void Configure(EntityTypeBuilder<Ticket> builder)
         {
-            modelBuilder.Entity<Person>(
-                entity =>
-                {
-                    entity.HasKey(e => e.Id);
-                });
+            builder.HasKey(x => x.Id);
         }
     }
 }

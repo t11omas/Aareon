@@ -22,7 +22,7 @@ namespace AareonTechnicalTest
         {
 
             services.AddControllers();
-            services.AddDbContext<ApplicationContext>(c => c.UseSqlite());
+            services.AddDbContextPool<ApplicationContext>(c => c.UseSqlite(Configuration.GetConnectionString("Default")));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AareonTechnicalTest", Version = "v1" });
