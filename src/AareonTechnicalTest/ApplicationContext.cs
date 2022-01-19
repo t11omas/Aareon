@@ -15,6 +15,8 @@ namespace AareonTechnicalTest
 
         public virtual DbSet<Ticket> Tickets { get; set; }
 
+        public virtual DbSet<Note> Notes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(ApplicationContext)));
